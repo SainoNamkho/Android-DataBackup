@@ -74,12 +74,11 @@ jobs:
           BUILD_PREMIUM: ${{ github.event.inputs.Premium }}
           BUILD_FOSS: ${{ github.event.inputs.Foss }}
         run: |
-          if [ $${{ inputs.target_branch }} = '1.1.x' ]; then
+          if [ ${{ inputs.target_branch }} = '1.1.x' ]; then
             if [ -f gradle.properties ]; then
               sed -i '/MaxPermSize/d' gradle.properties
             fi
-            
-          TASKS="assembleArm64-v8aPremiumRelease assembleArm64-v8aFossRelease assembleArm64-v8aCoolapkRelease"
+            TASKS="assembleArm64-v8aPremiumRelease assembleArm64-v8aFossRelease assembleArm64-v8aCoolapkRelease"
           else
             TASKS="assembleArm64-v8aAlphaRelease assembleArm64-v8aPremiumRelease assembleArm64-v8aFossRelease"
           fi
