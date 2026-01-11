@@ -6,7 +6,7 @@ on:
         Alpha:
           description: 'Alpha'
           required: true
-          default: 'true'
+          default: 'false'
         Premium:
           description: 'Premium'
           required: true
@@ -74,7 +74,10 @@ jobs:
           BUILD_PREMIUM: ${{ github.event.inputs.Premium }}
           BUILD_FOSS: ${{ github.event.inputs.Foss }}
         run: |
-          TASKS=""
+          if [ -f gradle.properties ]; then
+            sed -i '/MaxPermSize/d' gradle.properties
+          fi
+          TASKS="assembleArm64-v8aAlphaRelease assembleArm64-v8aPremiumRelease assembleArm64-v8aFossRelease"
           if [ ${BUILD_ALPHA} = 'true' ]; then
             TASKS="$TASKS assembleArm64-v8aAlphaRelease assembleArmeabi-v7aAlphaRelease assembleX86AlphaRelease assembleX86_64AlphaRelease"
           fi
@@ -84,7 +87,7 @@ jobs:
           if [ ${BUILD_FOSS} = 'true' ]; then
             TASKS="$TASKS assembleArm64-v8aFossRelease assembleArmeabi-v7aFossRelease assembleX86FossRelease assembleX86_64FossRelease"
           fi
-          if [ -z ${TASKS} ]; then
+          if [ -z "${TASKS}" ]; then
             TASKS="assembleRelease"
           fi
           ./gradlew $TASKS --daemon --parallel
